@@ -1,24 +1,49 @@
 import 'package:flutter/material.dart';
-
+import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter_example_webview_geolocator/widget/webview_geolocator.dart';
 
 void main() => runApp(MaterialApp(home: WebViewGeolocatorExample()));
 
-class WebViewGeolocatorExample extends StatelessWidget {
+class WebViewGeolocatorExample extends StatefulWidget {
+  @override
+  _WebViewGeolocatorExampleState createState() =>
+      _WebViewGeolocatorExampleState();
+}
+
+class _WebViewGeolocatorExampleState extends State<WebViewGeolocatorExample> {
+  WebViewController controller;
 
   @override
   Widget build(BuildContext context) {
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Flutter Example WebView Geolocator '),
+    return WillPopScope(
+      onWillPop: () {
+        if (controller != null) {
+          controller.goBack();
+        }
+        return;
+      },
+      child: Scaffold(
+//        appBar: AppBar(
+//          title: const Text('Flutter Example WebView Geolocator '),
+//        ),
+        body: SafeArea(
+          child: Builder(builder: (BuildContext context) {
+            return WebViewGeolocator(
+              initialUrl: 'https://google.com/',
+              javascriptMode: JavascriptMode.unrestricted,
+              onWebViewCreated: (WebViewController wvcontroller) {
+                controller = wvcontroller;
+              },
+            );
+          }),
+        ),
+//        floatingActionButton: FloatingActionButton(
+//          onPressed: () {
+//            controller.goBack();
+//          },
+//          child: Icon(Icons.arrow_back),
+//        ),
       ),
-      body: Builder(builder: (BuildContext context) {
-        return WebViewGeolocator(
-          initialUrl: 'https://rawcdn.githack.com/tlueder/flutter_example_webview_geolocator/fa259e6d138d55c1da2324a81c1cf53068d518ec/demo.html',
-          javascriptMode: JavascriptMode.unrestricted,
-        );
-      }),
     );
   }
 }
